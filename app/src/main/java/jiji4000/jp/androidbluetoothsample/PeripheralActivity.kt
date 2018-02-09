@@ -17,7 +17,7 @@ import java.util.*
 class PeripheralActivity : AppCompatActivity() {
     private companion object {
         val TAG = PeripheralActivity::class.java.simpleName
-        val SEND_VALUE = "peripheral value"
+        val SEND_VALUE = "peripheral cend value"
         val UUID_SERVICE = "bdb57744-0c99-11e8-ba89-0ed5f89f718b"
         val UUID_CHARACTERISTIC = "c54e5502-0c99-11e8-ba89-0ed5f89f718b"
         val UUID_CHARACTERISTIC_CONFIG = "cc1799e8-0c99-11e8-ba89-0ed5f89f718b"
