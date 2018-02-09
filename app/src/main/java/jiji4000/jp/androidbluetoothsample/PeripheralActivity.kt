@@ -10,6 +10,8 @@ import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.ParcelUuid
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.widget.Toast
 import java.util.*
@@ -25,7 +27,7 @@ class PeripheralActivity : AppCompatActivity() {
 
     var connectedCentralDevices = ArrayList<BleDevice>()
     // timer
-    private lateinit var timer : Timer
+    private lateinit var timer: Timer
     private lateinit var peripheralDataTimerTask: PeripheralDataTimerTask
     private lateinit var bleGattCharacteristic: BluetoothGattCharacteristic
     private lateinit var bleGattServer: BluetoothGattServer
@@ -33,16 +35,30 @@ class PeripheralActivity : AppCompatActivity() {
     private lateinit var bleAdapter: BluetoothAdapter
     private lateinit var bleManager: BluetoothManager
 
-    private var receivedNum : String = ""
+    private var receivedNum: String = ""
+    // ui
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var listAdapter: CentralListAdapter
 
     /**
      * 定期的にcentralに定期送信するタイマー
      */
     inner class PeripheralDataTimerTask : TimerTask() {
         override fun run() {
-            for(device in connectedCentralDevices){
+            for (device in connectedCentralDevices) {
                 notifyConnectedDevice()
             }
+        }
+    }
+
+    interface CentralListAdapterListener {
+        fun onClick(playList: DeviceData)
+    }
+
+    // listener for central device list
+    internal var itemListener: CentralListAdapterListener = object : CentralListAdapterListener {
+        override fun onClick(playList: DeviceData) {
+
         }
     }
 
@@ -67,8 +83,8 @@ class PeripheralActivity : AppCompatActivity() {
                 Log.d(TAG, "device name = " + device.name)
                 Log.d(TAG, "device address = " + address)
 
-                for(myDevice in connectedCentralDevices){
-                    if(myDevice.bleDevice == device){
+                for (myDevice in connectedCentralDevices) {
+                    if (myDevice.bleDevice == device) {
                         myDevice.isCoonect = true
                     }
                 }
@@ -82,8 +98,8 @@ class PeripheralActivity : AppCompatActivity() {
                 }
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.d(TAG, "call onConnectionStateChange STATE_DISCONNECTED")
-                for(myDevice in connectedCentralDevices){
-                    if(myDevice.bleDevice == device){
+                for (myDevice in connectedCentralDevices) {
+                    if (myDevice.bleDevice == device) {
                         connectedCentralDevices.remove(myDevice)
                     }
                 }
@@ -151,10 +167,16 @@ class PeripheralActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_peripheral)
+
+        recyclerView = findViewById<RecyclerView>(R.id.central_list).apply {
+            // 1.adapterにセット
+            adapter = listAdapter
+            // 2.LayoutMangerをセット
+            layoutManager = LinearLayoutManager(context)
+        }
     }
 
     /**
