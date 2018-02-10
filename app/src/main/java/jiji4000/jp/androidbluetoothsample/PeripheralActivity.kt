@@ -38,7 +38,6 @@ class PeripheralActivity : AppCompatActivity() {
     private var receivedNum: String = ""
     // ui
     private lateinit var recyclerView: RecyclerView
-    private lateinit var listAdapter: CentralListAdapter
 
     /**
      * 定期的にcentralに定期送信するタイマー
@@ -61,6 +60,8 @@ class PeripheralActivity : AppCompatActivity() {
 
         }
     }
+
+    private val listAdapter = CentralListAdapter(ArrayList(0), itemListener)
 
     /**
      * BluetoothGattServerCallback
