@@ -4,6 +4,7 @@ import android.annotation.TargetApi
 import android.bluetooth.*
 import android.bluetooth.le.*
 import android.bluetooth.le.ScanSettings.CALLBACK_TYPE_ALL_MATCHES
+import android.content.Context
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -21,6 +22,7 @@ class CentralActivity : AppCompatActivity() {
     private lateinit var bleScanner: BluetoothLeScanner
     private lateinit var bleCharacteristic: BluetoothGattCharacteristic
     private lateinit var bleAdapter: BluetoothAdapter
+    private lateinit var bleManager: BluetoothManager
 
     private var isConnect: Boolean = false
 
@@ -159,6 +161,9 @@ class CentralActivity : AppCompatActivity() {
         search_button.setOnClickListener { scanNewDevice() }
         // sendButton
         send_button.setOnClickListener { sendCentralData(input_message.text.toString()) }
+        // init
+        bleManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        bleAdapter = bleManager.getAdapter()
     }
 
     fun scanNewDevice() {
