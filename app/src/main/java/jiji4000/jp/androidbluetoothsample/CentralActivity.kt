@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.ParcelUuid
 import android.util.Log
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_central.*
 import java.util.*
 
@@ -167,6 +168,10 @@ class CentralActivity : AppCompatActivity() {
     }
 
     fun scanNewDevice() {
+        if(!bleAdapter.isEnabled){
+            Toast.makeText(this,"Please enable Bluetooth",Toast.LENGTH_SHORT)
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             startScanByBleScanner()
         } else {
@@ -206,5 +211,8 @@ class CentralActivity : AppCompatActivity() {
         val settings = ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_BALANCED).build()
         // デバイスの検出.
         bleScanner.startScan(scanFilters, settings, scanCallback)
+
+        // set text
+        state.text = "scanning peripheral"
     }
 }
