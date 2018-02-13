@@ -20,9 +20,6 @@ class PeripheralActivity : AppCompatActivity() {
     private companion object {
         val TAG = PeripheralActivity::class.java.simpleName
         val SEND_VALUE = "peripheral send value"
-        val UUID_SERVICE = "bdb57744-0c99-11e8-ba89-0ed5f89f718b"
-        val UUID_CHARACTERISTIC = "c54e5502-0c99-11e8-ba89-0ed5f89f718b"
-        val UUID_CHARACTERISTIC_CONFIG = "cc1799e8-0c99-11e8-ba89-0ed5f89f718b"
     }
 
     var connectedCentralDevices = ArrayList<BleDevice>()
@@ -197,13 +194,13 @@ class PeripheralActivity : AppCompatActivity() {
     fun prepareBle() {
         bleLeAdvertiser = bleAdapter.getBluetoothLeAdvertiser()
         if (bleLeAdvertiser != null) {
-            val btGattService = BluetoothGattService(UUID.fromString(UUID_SERVICE), BluetoothGattService.SERVICE_TYPE_PRIMARY)
+            val btGattService = BluetoothGattService(UUID.fromString(getString(R.string.uuid_service)), BluetoothGattService.SERVICE_TYPE_PRIMARY)
 
-            bleGattCharacteristic = BluetoothGattCharacteristic(UUID.fromString(UUID_CHARACTERISTIC), BluetoothGattCharacteristic.PROPERTY_NOTIFY or BluetoothGattCharacteristic.PROPERTY_READ or BluetoothGattCharacteristic.PROPERTY_WRITE, BluetoothGattDescriptor.PERMISSION_WRITE or BluetoothGattCharacteristic.PERMISSION_READ)
+            bleGattCharacteristic = BluetoothGattCharacteristic(UUID.fromString(getString(R.string.uuid_characteristic)), BluetoothGattCharacteristic.PROPERTY_NOTIFY or BluetoothGattCharacteristic.PROPERTY_READ or BluetoothGattCharacteristic.PROPERTY_WRITE, BluetoothGattDescriptor.PERMISSION_WRITE or BluetoothGattCharacteristic.PERMISSION_READ)
             btGattService.addCharacteristic(bleGattCharacteristic)
 
             val dataDescriptor = BluetoothGattDescriptor(
-                    UUID.fromString(UUID_CHARACTERISTIC_CONFIG), BluetoothGattDescriptor.PERMISSION_WRITE or BluetoothGattDescriptor.PERMISSION_READ)
+                    UUID.fromString(getString(R.string.uuid_characteristic_config)), BluetoothGattDescriptor.PERMISSION_WRITE or BluetoothGattDescriptor.PERMISSION_READ)
             bleGattCharacteristic.addDescriptor(dataDescriptor)
 
             bleGattServer = bleManager.openGattServer(this, gattServerCallback)
@@ -211,7 +208,7 @@ class PeripheralActivity : AppCompatActivity() {
             val dataBuilder = AdvertiseData.Builder()
             val settingsBuilder = AdvertiseSettings.Builder()
             dataBuilder.setIncludeTxPowerLevel(false)
-            dataBuilder.addServiceUuid(ParcelUuid.fromString(UUID_SERVICE))
+            dataBuilder.addServiceUuid(ParcelUuid.fromString(getString(R.string.uuid_service)))
             settingsBuilder.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
             settingsBuilder.setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH)
             val bluetoothLeAdvertiser = bleAdapter.getBluetoothLeAdvertiser()
