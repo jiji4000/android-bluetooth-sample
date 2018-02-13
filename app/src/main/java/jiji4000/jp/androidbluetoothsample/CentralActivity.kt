@@ -120,10 +120,12 @@ class CentralActivity : AppCompatActivity() {
          */
         override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
             Log.d(TAG, "call onCharacteristicChanged")
-            //キャラクタリスティックのUUIDをチェック(getUuidの結果が全て小文字で帰ってくるのでUpperCaseに変換)
-            if (getString(R.string.uuid_characteristic).equals(characteristic.uuid.toString().toUpperCase())) {
+            // check characteristic uuid
+            if (getString(R.string.uuid_characteristic).equals(characteristic.uuid.toString())) {
                 val peripheralValue = characteristic.getStringValue(0)
-                Log.d(TAG, "call onCharacteristicChanged = " + peripheralValue)
+                runOnUiThread({
+                    message_text.text = peripheralValue
+                })
             }
         }
 
@@ -168,19 +170,17 @@ class CentralActivity : AppCompatActivity() {
     }
 
     fun scanNewDevice() {
-        if(!bleAdapter.isEnabled){
-            Toast.makeText(this,"Please enable Bluetooth",Toast.LENGTH_SHORT)
+        if (!bleAdapter.isEnabled) {
+            Toast.makeText(this, "Please enable Bluetooth", Toast.LENGTH_SHORT)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             startScanByBleScanner()
         } else {
             bleAdapter.startLeScan(BluetoothAdapter.LeScanCallback { device, rssi, scanRecord ->
-                runOnUiThread(Runnable {
-                    // スキャン中に見つかったデバイスに接続を試みる.第三引数には接続後に呼ばれるBluetoothGattCallbackを指定する.
-                    Log.d(TAG, "find device")
-                    bleGatt = device.connectGatt(getApplicationContext(), false, gattCallBack)
-                })
+                // スキャン中に見つかったデバイスに接続を試みる.第三引数には接続後に呼ばれるBluetoothGattCallbackを指定する.
+                Log.d(TAG, "find device")
+                bleGatt = device.connectGatt(getApplicationContext(), false, gattCallBack)
             })
         }
     }
@@ -211,7 +211,6 @@ class CentralActivity : AppCompatActivity() {
         val settings = ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_BALANCED).build()
         // デバイスの検出.
         bleScanner.startScan(scanFilters, settings, scanCallback)
-
         // set text
         state.text = "scanning peripheral"
     }
