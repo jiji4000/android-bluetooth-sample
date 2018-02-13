@@ -3,6 +3,6 @@
     <!-- UUID -->
     <string name="uuid_service">bdb57744-0c99-11e8-ba89-0ed5f89f718b</string>
     <string name="uuid_characteristic">c54e5502-0c99-11e8-ba89-0ed5f89f718b</string>
-    <string name="uuid_characteristic_config">cc1799e8-0c99-11e8-ba89-0ed5f89f718b</string>
+    <string name="uuid_characteristic_config">00002902-0000-1000-8000-00805f9b34fb"</string>
     <string name="permission_request">need permission to enable Bluetooth</string>
 </resources>
