@@ -36,7 +36,7 @@ class CentralActivity : AppCompatActivity() {
                 super.onScanResult(callbackType, result)
                 val bluetoothDevice = result.device
                 // try to connect device
-                bleGatt = bluetoothDevice.connectGatt(applicationContext, false, gattCallBack)
+                bleGatt = bluetoothDevice.connectGatt(applicationContext, true, gattCallBack)
                 bleScanner.stopScan(this)
             }
         }
@@ -196,7 +196,7 @@ class CentralActivity : AppCompatActivity() {
     }
 
     /**
-     * Bleによる端末検索を行う
+     * scan by BLE
      */
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     fun startScanByBleScanner() {
