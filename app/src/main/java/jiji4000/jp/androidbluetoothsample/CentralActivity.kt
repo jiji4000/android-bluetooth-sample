@@ -84,13 +84,12 @@ class CentralActivity : AppCompatActivity() {
                         // キャラクタリスティックが見つかったら、Notificationをリクエスト.
                         bleGatt.setCharacteristicNotification(bleCharacteristic, true)
 
-                        // Characteristic の Notificationを有効化する.
+                        // set Characteristic Notification enable (uuid_characteristic_config is static value)
                         val bleDescriptor = bleCharacteristic.getDescriptor(
                                 UUID.fromString(getString(R.string.uuid_characteristic_config)))
                         bleDescriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)
                         // Write the value of a given descriptor to the associated remote device.
                         bleGatt.writeDescriptor(bleDescriptor)
-                        // 接続が完了したらデータ送信を開始する.
                         isConnect = true
                     }
                 }
