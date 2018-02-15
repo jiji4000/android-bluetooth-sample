@@ -71,29 +71,27 @@ class CentralActivity : AppCompatActivity() {
 
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
             // Serviceが見つかったら実行.
-            if (!isConnect) {
-                if (status == BluetoothGatt.GATT_SUCCESS) {
-                    Log.d(TAG, "call onServicesDiscovered() GATT_SUCCESS")
-                    // UUIDが同じかどうかを確認する.
-                    val bleService = gatt.getService(UUID.fromString(getString(R.string.uuid_service)))
-                    if (bleService != null) {
-                        // 指定したUUIDを持つCharacteristicを確認する.
-                        bleCharacteristic = bleService.getCharacteristic(UUID.fromString(getString(R.string.uuid_characteristic)))
-                        if (bleCharacteristic != null) {
-                            // Service, CharacteristicのUUIDが同じならBluetoothGattを更新する.
-                            bleGatt = gatt
-                            // キャラクタリスティックが見つかったら、Notificationをリクエスト.
-                            bleGatt.setCharacteristicNotification(bleCharacteristic, true)
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                Log.d(TAG, "call onServicesDiscovered() GATT_SUCCESS")
+                // UUIDが同じかどうかを確認する.
+                val bleService = gatt.getService(UUID.fromString(getString(R.string.uuid_service)))
+                if (bleService != null) {
+                    // 指定したUUIDを持つCharacteristicを確認する.
+                    bleCharacteristic = bleService.getCharacteristic(UUID.fromString(getString(R.string.uuid_characteristic)))
+                    if (bleCharacteristic != null) {
+                        // Service, CharacteristicのUUIDが同じならBluetoothGattを更新する.
+                        bleGatt = gatt
+                        // キャラクタリスティックが見つかったら、Notificationをリクエスト.
+                        bleGatt.setCharacteristicNotification(bleCharacteristic, true)
 
-                            // Characteristic の Notificationを有効化する.
-                            val bleDescriptor = bleCharacteristic.getDescriptor(
-                                    UUID.fromString(getString(R.string.uuid_characteristic_config)))
-                            bleDescriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)
-                            // Write the value of a given descriptor to the associated remote device.
-                            bleGatt.writeDescriptor(bleDescriptor)
-                            // 接続が完了したらデータ送信を開始する.
-                            isConnect = true
-                        }
+                        // Characteristic の Notificationを有効化する.
+                        val bleDescriptor = bleCharacteristic.getDescriptor(
+                                UUID.fromString(getString(R.string.uuid_characteristic_config)))
+                        bleDescriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)
+                        // Write the value of a given descriptor to the associated remote device.
+                        bleGatt.writeDescriptor(bleDescriptor)
+                        // 接続が完了したらデータ送信を開始する.
+                        isConnect = true
                     }
                 }
             }
