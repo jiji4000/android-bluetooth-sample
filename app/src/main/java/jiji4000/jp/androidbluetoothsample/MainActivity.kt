@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         private val TAG = MainActivity::class.java.simpleName
         private const val PERMISSION_DIALOG = "permission_dialog"
         private const val REQUEST_BLUETOOTH_PERMISSIONS = 1
-        private val BLE_PERMISSIONS = arrayOf(Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN)
+        private val BLE_PERMISSIONS = arrayOf(Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
     lateinit var centralButton: Button
@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity() {
         // check permissions for 6.0
         if (!hasPermissionsGranted(BLE_PERMISSIONS)) {
             requestBlePermissions()
-            return
         }
 
         // instantiate
@@ -106,7 +105,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     class ConfirmationDialog : DialogFragment() {
-        override fun onCreateDialog(savedInstanceState: Bundle): Dialog {
+        override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
             val parent = parentFragment
             return AlertDialog.Builder(activity)
                     .setMessage("need Bluetooth permission")
@@ -121,7 +120,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     class ErrorDialog : DialogFragment() {
-        override fun onCreateDialog(savedInstanceState: Bundle): Dialog {
+        override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
             val activity = activity
             return AlertDialog.Builder(activity)
                     .setMessage(arguments.getString(ARG_MESSAGE))
