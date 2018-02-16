@@ -9,10 +9,8 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/central_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@id/advertise_button"
-        >
-    </android.support.v7.widget.RecyclerView>
+        android:layout_height="359dp"
+        app:layout_constraintEnd_toEndOf="@id/advertise_button"></android.support.v7.widget.RecyclerView>
 
     <Button
         android:id="@+id/advertise_button"
@@ -24,5 +22,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/central_list" />
+        app:layout_constraintTop_toBottomOf="@+id/central_list"
+        app:layout_constraintVertical_bias="0.942" />
 </android.support.constraint.ConstraintLayout>
