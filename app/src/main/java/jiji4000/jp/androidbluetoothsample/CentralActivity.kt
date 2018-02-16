@@ -19,7 +19,7 @@ class CentralActivity : AppCompatActivity() {
         val TAG = CentralActivity::class.java.simpleName
     }
 
-    private lateinit var bleGatt: BluetoothGatt
+    private var bleGatt: BluetoothGatt? = null
     private lateinit var bleScanner: BluetoothLeScanner
     private lateinit var bleCharacteristic: BluetoothGattCharacteristic
     private lateinit var bleAdapter: BluetoothAdapter
