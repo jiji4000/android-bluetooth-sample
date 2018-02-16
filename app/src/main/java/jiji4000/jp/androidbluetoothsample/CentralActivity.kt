@@ -36,8 +36,11 @@ class CentralActivity : AppCompatActivity() {
                 super.onScanResult(callbackType, result)
                 val bluetoothDevice = result.device
                 // try to connect device
-                bleGatt = bluetoothDevice.connectGatt(applicationContext, true, gattCallBack)
+                bleGatt = bluetoothDevice.connectGatt(applicationContext, false, gattCallBack)
                 bleScanner.stopScan(this)
+                runOnUiThread({
+                    message_text.setText("trying to connect")
+                })
             }
         }
 
@@ -58,6 +61,9 @@ class CentralActivity : AppCompatActivity() {
                 }
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.d(TAG, "call onConnectionStateChange STATE_DISCONNECTED")
+                runOnUiThread({
+                    message_text.setText("connection failed")
+                })
                 // 接続が切れたらGATTを空にする.
                 bleGatt?.close()
             } else if (newState == BluetoothProfile.STATE_CONNECTING) {
@@ -89,6 +95,11 @@ class CentralActivity : AppCompatActivity() {
                         // Write the value of a given descriptor to the associated remote device.
                         bleGatt?.writeDescriptor(bleDescriptor)
                         isConnect = true
+                        // show message
+                        runOnUiThread({
+                            message_text.setText("connect success!")
+                        })
+
                     }
                 }
             }
