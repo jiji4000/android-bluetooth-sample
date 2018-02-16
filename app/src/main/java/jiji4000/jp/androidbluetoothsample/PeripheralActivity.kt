@@ -20,7 +20,6 @@ import kotlinx.android.synthetic.main.activity_peripheral.*
 class PeripheralActivity : AppCompatActivity() {
     private companion object {
         val TAG = PeripheralActivity::class.java.simpleName
-        val SEND_VALUE = "peripheral send value"
     }
 
     var connectedCentralDevices = ArrayList<BleDevice>()
@@ -32,6 +31,7 @@ class PeripheralActivity : AppCompatActivity() {
     private lateinit var bleLeAdvertiser: BluetoothLeAdvertiser
     private lateinit var bleAdapter: BluetoothAdapter
     private lateinit var bleManager: BluetoothManager
+    private val random = Random()
 
     private var receivedNum: String = ""
 
@@ -189,9 +189,10 @@ class PeripheralActivity : AppCompatActivity() {
     private fun notifyConnectedDevice() {
         // 繋がったcentral端末に一斉送信する
         for (device in connectedCentralDevices) {
-            bleGattCharacteristic.setValue("peripheral value")
+            val value = random.nextInt(100).toString()
+            bleGattCharacteristic.setValue(value)
             if (!bleGattServer.notifyCharacteristicChanged(device.bleDevice, bleGattCharacteristic, true)) {
-                Log.d(TAG, "notifyCharacteristicChanged failed value = " + SEND_VALUE)
+                Log.d(TAG, "notifyCharacteristicChanged failed value = " + value)
             }
         }
     }
