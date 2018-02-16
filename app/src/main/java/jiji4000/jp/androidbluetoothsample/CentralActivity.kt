@@ -59,9 +59,7 @@ class CentralActivity : AppCompatActivity() {
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.d(TAG, "call onConnectionStateChange STATE_DISCONNECTED")
                 // 接続が切れたらGATTを空にする.
-                if (bleGatt != null) {
-                    bleGatt.close()
-                }
+                bleGatt?.close()
             } else if (newState == BluetoothProfile.STATE_CONNECTING) {
                 Log.d(TAG, "call onConnectionStateChange STATE_CONNECTING")
             } else if (newState == BluetoothProfile.STATE_DISCONNECTING) {
@@ -82,14 +80,14 @@ class CentralActivity : AppCompatActivity() {
                         // Service, CharacteristicのUUIDが同じならBluetoothGattを更新する.
                         bleGatt = gatt
                         // キャラクタリスティックが見つかったら、Notificationをリクエスト.
-                        bleGatt.setCharacteristicNotification(bleCharacteristic, true)
+                        bleGatt?.setCharacteristicNotification(bleCharacteristic, true)
 
                         // set Characteristic Notification enable (uuid_characteristic_config is static value)
                         val bleDescriptor = bleCharacteristic.getDescriptor(
                                 UUID.fromString(getString(R.string.uuid_characteristic_config)))
                         bleDescriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)
                         // Write the value of a given descriptor to the associated remote device.
-                        bleGatt.writeDescriptor(bleDescriptor)
+                        bleGatt?.writeDescriptor(bleDescriptor)
                         isConnect = true
                     }
                 }
@@ -150,7 +148,7 @@ class CentralActivity : AppCompatActivity() {
             Log.d(TAG, "call onDescriptorWrite")
             val message = input_message.text.toString()
             bleCharacteristic.setValue(message)
-            bleGatt.writeCharacteristic(bleCharacteristic)
+            bleGatt?.writeCharacteristic(bleCharacteristic)
         }
     }
 
@@ -193,7 +191,7 @@ class CentralActivity : AppCompatActivity() {
     fun sendCentralData(data: String) {
         if (isConnect) {
             bleCharacteristic.setValue(data)
-            bleGatt.writeCharacteristic(bleCharacteristic)
+            bleGatt?.writeCharacteristic(bleCharacteristic)
         }
     }
 
