@@ -6,6 +6,7 @@ import android.bluetooth.le.AdvertiseCallback
 import android.bluetooth.le.AdvertiseData
 import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.BluetoothLeAdvertiser
+import android.content.Context
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -24,7 +25,7 @@ class PeripheralActivity : AppCompatActivity() {
 
     var connectedCentralDevices = ArrayList<BleDevice>()
     // timer
-    private lateinit var timer: Timer
+    private var timer: Timer? = null
     private lateinit var peripheralDataTimerTask: PeripheralDataTimerTask
     private lateinit var bleGattCharacteristic: BluetoothGattCharacteristic
     private lateinit var bleGattServer: BluetoothGattServer
@@ -65,6 +66,9 @@ class PeripheralActivity : AppCompatActivity() {
         override fun onServiceAdded(status: Int, service: BluetoothGattService) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 Log.d("Peripheral", "service added " + service.uuid.toString())
+                runOnUiThread({
+                    state_text.setText("service added")
+                })
             } else {
                 Log.d("Peripheral", "couldn't add service")
             }
@@ -90,7 +94,7 @@ class PeripheralActivity : AppCompatActivity() {
                     timer = Timer()
                     peripheralDataTimerTask = PeripheralDataTimerTask()
                     // 第二引数:最初の処理までのミリ秒 第三引数:以降の処理実行の間隔(ミリ秒).
-                    timer.schedule(peripheralDataTimerTask, 1000, 1000)
+                    timer?.schedule(peripheralDataTimerTask, 1000, 1000)
                 }
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.d(TAG, "call onConnectionStateChange STATE_DISCONNECTED")
@@ -119,6 +123,7 @@ class PeripheralActivity : AppCompatActivity() {
                                                   responseNeeded: Boolean,
                                                   offset: Int,
                                                   value: ByteArray) {
+            Log.d(TAG, "call onCharacteristicWriteRequest")
             super.onCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite, responseNeeded, offset, value)
 
             // set written value to characteristic.
@@ -136,8 +141,8 @@ class PeripheralActivity : AppCompatActivity() {
         }
 
         override fun onDescriptorWriteRequest(device: BluetoothDevice, requestId: Int, descriptor: BluetoothGattDescriptor, preparedWrite: Boolean, responseNeeded: Boolean, offset: Int, value: ByteArray) {
+            Log.d(TAG, "call onDescriptorWriteRequest")
             super.onDescriptorWriteRequest(device, requestId, descriptor, preparedWrite, responseNeeded, offset, value)
-
             if (responseNeeded) {
                 bleGattServer.sendResponse(device,
                         requestId,
@@ -167,12 +172,17 @@ class PeripheralActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_peripheral)
 
+        bleManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        bleAdapter = bleManager.getAdapter()
+
         central_list.apply {
             // 1.adapterにセット
             adapter = listAdapter
             // 2.LayoutMangerをセット
             layoutManager = LinearLayoutManager(context)
         }
+
+        advertise_button.setOnClickListener { prepareBle() }
     }
 
     /**
@@ -200,7 +210,6 @@ class PeripheralActivity : AppCompatActivity() {
             val dataDescriptor = BluetoothGattDescriptor(
                     UUID.fromString(getString(R.string.uuid_characteristic_config)), BluetoothGattDescriptor.PERMISSION_WRITE or BluetoothGattDescriptor.PERMISSION_READ)
             bleGattCharacteristic.addDescriptor(dataDescriptor)
-
             bleGattServer = bleManager.openGattServer(this, gattServerCallback)
             bleGattServer.addService(btGattService)
             val dataBuilder = AdvertiseData.Builder()
