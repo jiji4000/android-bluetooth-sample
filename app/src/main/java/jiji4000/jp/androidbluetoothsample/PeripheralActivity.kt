@@ -83,11 +83,9 @@ class PeripheralActivity : AppCompatActivity() {
                 Log.d(TAG, "device name = " + device.name)
                 Log.d(TAG, "device address = " + address)
 
-                for (myDevice in connectedCentralDevices) {
-                    if (myDevice.bleDevice == device) {
-                        myDevice.isCoonect = true
-                    }
-                }
+                // create centralDeviceData
+                val bleDevice = BleDevice(device, true)
+                connectedCentralDevices.add(bleDevice)
 
                 // timer start
                 if (timer == null) {
