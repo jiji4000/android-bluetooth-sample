@@ -166,6 +166,11 @@ class CentralActivity : AppCompatActivity() {
         bleAdapter = bleManager.getAdapter()
     }
 
+    override fun onDestroy() {
+        bleGatt?.close()
+        super.onDestroy()
+    }
+
     fun scanNewDevice() {
         if (!bleAdapter.isEnabled) {
             Toast.makeText(this, "Please enable Bluetooth", Toast.LENGTH_SHORT)
