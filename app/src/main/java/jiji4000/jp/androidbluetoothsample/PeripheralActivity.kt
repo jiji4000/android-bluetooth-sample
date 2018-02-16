@@ -11,10 +11,10 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.ParcelUuid
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.widget.Toast
 import java.util.*
+import kotlinx.android.synthetic.main.activity_peripheral.*
 
 class PeripheralActivity : AppCompatActivity() {
     private companion object {
@@ -33,8 +33,6 @@ class PeripheralActivity : AppCompatActivity() {
     private lateinit var bleManager: BluetoothManager
 
     private var receivedNum: String = ""
-    // ui
-    private lateinit var recyclerView: RecyclerView
 
     /**
      * 定期的にcentralに定期送信するタイマー
@@ -169,7 +167,7 @@ class PeripheralActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_peripheral)
 
-        recyclerView = findViewById<RecyclerView>(R.id.central_list).apply {
+        central_list.apply {
             // 1.adapterにセット
             adapter = listAdapter
             // 2.LayoutMangerをセット
