@@ -237,9 +237,8 @@ class PeripheralActivity : AppCompatActivity() {
             dataBuilder.addServiceUuid(ParcelUuid.fromString(getString(R.string.uuid_service)))
             settingsBuilder.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
             settingsBuilder.setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH)
-            val bluetoothLeAdvertiser = bleAdapter.getBluetoothLeAdvertiser()
             // Start Bluetooth LE Advertising
-            bluetoothLeAdvertiser.startAdvertising(settingsBuilder.build(), dataBuilder.build(), object : AdvertiseCallback() {
+            bleLeAdvertiser.startAdvertising(settingsBuilder.build(), dataBuilder.build(), object : AdvertiseCallback() {
                 override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
 
                 }
