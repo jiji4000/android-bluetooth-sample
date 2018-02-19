@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.item_central_list.view.*
 
-class CentralListAdapter(centralList: List<DeviceData>, private val centralListAdapterListener: PeripheralActivity.CentralListAdapterListener) : RecyclerView.Adapter<CentralListAdapter.ViewHolder>() {
+class CentralListAdapter(centralList: ArrayList<DeviceData>, private val centralListAdapterListener: PeripheralActivity.CentralListAdapterListener) : RecyclerView.Adapter<CentralListAdapter.ViewHolder>() {
 
-    var centralList: List<DeviceData> = centralList
+    var centralList: ArrayList<DeviceData> = centralList
         set(centralList) {
             field = centralList
             notifyDataSetChanged()

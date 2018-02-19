@@ -86,6 +86,12 @@ class PeripheralActivity : AppCompatActivity() {
                 // create centralDeviceData
                 val bleDevice = BleDevice(device, true)
                 connectedCentralDevices.add(bleDevice)
+                // add list
+                val deviceData = DeviceData(device.address, "new Device")
+                listAdapter.centralList.add(deviceData)
+                runOnUiThread {
+                    listAdapter.notifyItemInserted(listAdapter.centralList.size - 1)
+                }
 
                 // timer start
                 if (timer == null) {
@@ -99,7 +105,12 @@ class PeripheralActivity : AppCompatActivity() {
                 for (myDevice in connectedCentralDevices) {
                     if (myDevice.bleDevice == device) {
                         connectedCentralDevices.remove(myDevice)
+                        listAdapter.centralList.removeAt(connectedCentralDevices.size)
+                        break;
                     }
+                }
+                runOnUiThread {
+                    listAdapter.notifyDataSetChanged()
                 }
             }
         }
@@ -128,6 +139,15 @@ class PeripheralActivity : AppCompatActivity() {
             characteristic.value = value
             // get value
             receivedNum = characteristic.getStringValue(offset)
+
+            // search uuid and update message
+            for (list in listAdapter.centralList) {
+                if (device.address == list.uuid) {
+                    list.message = receivedNum
+                }
+            }
+
+            runOnUiThread { listAdapter.notifyDataSetChanged() }
 
             if (responseNeeded) {
                 bleGattServer.sendResponse(device,
