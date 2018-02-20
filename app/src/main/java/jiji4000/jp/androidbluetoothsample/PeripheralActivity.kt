@@ -27,7 +27,7 @@ class PeripheralActivity : AppCompatActivity() {
     private var timer: Timer? = null
     private lateinit var peripheralDataTimerTask: PeripheralDataTimerTask
     private lateinit var bleGattCharacteristic: BluetoothGattCharacteristic
-    private lateinit var bleGattServer: BluetoothGattServer
+    private var bleGattServer: BluetoothGattServer? = null
     private lateinit var bleLeAdvertiser: BluetoothLeAdvertiser
     private lateinit var bleAdapter: BluetoothAdapter
     private lateinit var bleManager: BluetoothManager
@@ -150,7 +150,7 @@ class PeripheralActivity : AppCompatActivity() {
             runOnUiThread { listAdapter.notifyDataSetChanged() }
 
             if (responseNeeded) {
-                bleGattServer.sendResponse(device,
+                bleGattServer?.sendResponse(device,
                         requestId,
                         BluetoothGatt.GATT_SUCCESS,
                         0,
@@ -162,7 +162,7 @@ class PeripheralActivity : AppCompatActivity() {
             Log.d(TAG, "call onDescriptorWriteRequest")
             super.onDescriptorWriteRequest(device, requestId, descriptor, preparedWrite, responseNeeded, offset, value)
             if (responseNeeded) {
-                bleGattServer.sendResponse(device,
+                bleGattServer?.sendResponse(device,
                         requestId,
                         BluetoothGatt.GATT_SUCCESS,
                         0,
@@ -203,6 +203,12 @@ class PeripheralActivity : AppCompatActivity() {
         advertise_button.setOnClickListener { prepareBle() }
     }
 
+    override fun onDestroy() {
+        bleGattServer?.close()
+        bleGattServer = null
+        super.onDestroy()
+    }
+
     /**
      * central端末に一斉送信する
      */
@@ -211,7 +217,7 @@ class PeripheralActivity : AppCompatActivity() {
         for (device in connectedCentralDevices) {
             val value = random.nextInt(100).toString()
             bleGattCharacteristic.setValue(value)
-            if (!bleGattServer.notifyCharacteristicChanged(device.bleDevice, bleGattCharacteristic, true)) {
+            if (!bleGattServer?.notifyCharacteristicChanged(device.bleDevice, bleGattCharacteristic, true)!!) {
                 Log.d(TAG, "notifyCharacteristicChanged failed value = " + value)
             }
         }
@@ -230,7 +236,7 @@ class PeripheralActivity : AppCompatActivity() {
                     UUID.fromString(getString(R.string.uuid_characteristic_config)), BluetoothGattDescriptor.PERMISSION_WRITE or BluetoothGattDescriptor.PERMISSION_READ)
             bleGattCharacteristic.addDescriptor(dataDescriptor)
             bleGattServer = bleManager.openGattServer(this, gattServerCallback)
-            bleGattServer.addService(btGattService)
+            bleGattServer?.addService(btGattService)
             val dataBuilder = AdvertiseData.Builder()
             val settingsBuilder = AdvertiseSettings.Builder()
             dataBuilder.setIncludeTxPowerLevel(false)
