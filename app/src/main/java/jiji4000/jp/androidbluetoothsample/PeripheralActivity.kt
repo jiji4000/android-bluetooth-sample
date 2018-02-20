@@ -25,7 +25,7 @@ class PeripheralActivity : AppCompatActivity() {
     var connectedCentralDevices = ArrayList<BleDevice>()
     // timer
     private var timer: Timer? = null
-    private lateinit var peripheralDataTimerTask: PeripheralDataTimerTask
+    private var peripheralDataTimerTask: PeripheralDataTimerTask? = null
     private lateinit var bleGattCharacteristic: BluetoothGattCharacteristic
     private var bleGattServer: BluetoothGattServer? = null
     private lateinit var bleLeAdvertiser: BluetoothLeAdvertiser
@@ -206,6 +206,9 @@ class PeripheralActivity : AppCompatActivity() {
     override fun onDestroy() {
         bleGattServer?.close()
         bleGattServer = null
+        // timer
+        timer?.cancel()
+        peripheralDataTimerTask?.cancel()
         super.onDestroy()
     }
 
