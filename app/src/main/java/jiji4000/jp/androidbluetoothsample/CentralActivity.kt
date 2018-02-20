@@ -34,10 +34,10 @@ class CentralActivity : AppCompatActivity() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             if (callbackType == CALLBACK_TYPE_ALL_MATCHES) {
                 super.onScanResult(callbackType, result)
-                val bluetoothDevice = result.device
-                // try to connect device
-                bleGatt = bluetoothDevice.connectGatt(applicationContext, false, gattCallBack)
                 bleScanner.stopScan(this)
+                val bluetoothDevice = result.device
+                bleGatt = bluetoothDevice.connectGatt(applicationContext, false, gattCallBack)
+                // try to connect device
                 runOnUiThread({
                     message_text.setText("trying to connect")
                 })
@@ -177,6 +177,7 @@ class CentralActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         bleGatt?.close()
+        bleGatt = null
         super.onDestroy()
     }
 
