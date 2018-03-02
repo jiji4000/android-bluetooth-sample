@@ -11,7 +11,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.util.Log
-import android.widget.Button
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,25 +22,20 @@ class MainActivity : AppCompatActivity() {
         private val BLE_PERMISSIONS = arrayOf(Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
-    lateinit var centralButton: Button
-    lateinit var peripheralButton: Button
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         // check permissions for 6.0
-        if (!hasPermissionsGranted(BLE_PERMISSIONS)) {
+        if (!this.hasPermissionsGranted(BLE_PERMISSIONS)) {
             requestBlePermissions()
         }
 
-        // instantiate
-        centralButton = findViewById(R.id.central_btn)
-        centralButton.setOnClickListener {
+        central_btn.setOnClickListener {
             startActivity(Intent(this, CentralActivity::class.java))
         }
-        peripheralButton = findViewById(R.id.periphera_btn)
-        peripheralButton.setOnClickListener {
+
+        periphera_btn.setOnClickListener {
             startActivity(Intent(this, PeripheralActivity::class.java))
         }
     }
