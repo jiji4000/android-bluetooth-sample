@@ -218,10 +218,15 @@ class PeripheralActivity : AppCompatActivity() {
     private fun notifyConnectedDevice() {
         // 繋がったcentral端末に一斉送信する
         for (device in connectedCentralDevices) {
-            val value = random.nextInt(100).toString()
-            bleGattCharacteristic.setValue(value)
-            if (!bleGattServer?.notifyCharacteristicChanged(device.bleDevice, bleGattCharacteristic, true)!!) {
-                Log.d(TAG, "notifyCharacteristicChanged failed value = " + value)
+            // get device connect State
+            val connectState = bleManager.getConnectionState(device.bleDevice,BluetoothProfile.GATT)
+            // if timer interval is short need check device is CONNECTED.
+            if(connectState == BluetoothProfile.STATE_CONNECTED) {
+                val value = random.nextInt(100).toString()
+                bleGattCharacteristic.setValue(value)
+                if (!bleGattServer?.notifyCharacteristicChanged(device.bleDevice, bleGattCharacteristic, true)!!) {
+                    Log.d(TAG, "notifyCharacteristicChanged failed value = " + value)
+                }
             }
         }
     }
