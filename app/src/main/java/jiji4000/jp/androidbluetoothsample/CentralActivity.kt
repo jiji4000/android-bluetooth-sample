@@ -24,6 +24,7 @@ class CentralActivity : AppCompatActivity() {
     private lateinit var bleCharacteristic: BluetoothGattCharacteristic
     private lateinit var bleAdapter: BluetoothAdapter
     private lateinit var bleManager: BluetoothManager
+    private lateinit var peripheralDevice : BluetoothDevice
 
     private var isConnect: Boolean = false
 
@@ -35,8 +36,9 @@ class CentralActivity : AppCompatActivity() {
             if (callbackType == CALLBACK_TYPE_ALL_MATCHES) {
                 super.onScanResult(callbackType, result)
                 bleScanner.stopScan(this)
-                val bluetoothDevice = result.device
-                bleGatt = bluetoothDevice.connectGatt(applicationContext, false, gattCallBack)
+                // save device for try to connect DISCONNECTED device
+                peripheralDevice = result.device
+                bleGatt = peripheralDevice.connectGatt(applicationContext, false, gattCallBack)
                 // try to connect device
                 runOnUiThread({
                     message_text.setText("trying to connect")
@@ -66,6 +68,9 @@ class CentralActivity : AppCompatActivity() {
                 })
                 // 接続が切れたらGATTを空にする.
                 bleGatt?.close()
+                // try to connect peripheral device which connected
+                bleGatt = peripheralDevice.connectGatt(applicationContext, false,this)
+
             } else if (newState == BluetoothProfile.STATE_CONNECTING) {
                 Log.d(TAG, "call onConnectionStateChange STATE_CONNECTING")
             } else if (newState == BluetoothProfile.STATE_DISCONNECTING) {
@@ -192,7 +197,9 @@ class CentralActivity : AppCompatActivity() {
             bleAdapter.startLeScan(BluetoothAdapter.LeScanCallback { device, rssi, scanRecord ->
                 // スキャン中に見つかったデバイスに接続を試みる.第三引数には接続後に呼ばれるBluetoothGattCallbackを指定する.
                 Log.d(TAG, "find device")
-                bleGatt = device.connectGatt(getApplicationContext(), false, gattCallBack)
+                // save device for try to connect DISCONNECTED device
+                peripheralDevice = device;
+                bleGatt = peripheralDevice.connectGatt(getApplicationContext(), false, gattCallBack)
             })
         }
     }
